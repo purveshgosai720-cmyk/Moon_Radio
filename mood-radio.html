@@ -1,0 +1,1700 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mood Radio 🎧</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+--accent:#ffb84d;
+--bg:#07080c;
+--card:rgba(255,255,255,.07);
+--border:rgba(255,255,255,.14);
+--text:#fff;
+--muted:#a8acb8;
+}
+
+body{
+margin:0;
+background:radial-gradient(circle at 15% 0%,#26354d 0%,#0a0c12 45%,#050609 100%);
+color:var(--text);
+font-family:Arial,Helvetica,sans-serif;
+min-height:100vh;
+}
+
+.container{
+width:min(1200px,92%);
+margin:auto;
+padding:25px 0 100px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-size:21px;
+font-weight:800;
+}
+
+.clock{
+color:var(--muted);
+font-size:13px;
+}
+
+.hero{
+margin-top:65px;
+}
+
+.hero-small{
+color:var(--muted);
+letter-spacing:3px;
+font-size:12px;
+}
+
+.hero h1{
+font-size:clamp(48px,8vw,95px);
+line-height:.9;
+letter-spacing:-5px;
+margin:25px 0;
+}
+
+.hero p{
+color:var(--muted);
+max-width:650px;
+line-height:1.7;
+}
+
+.quote{
+margin-top:25px;
+min-height:25px;
+font-style:italic;
+color:#ddd;
+}
+
+.search-box{
+display:flex;
+gap:10px;
+margin:30px 0;
+}
+
+.search-box input{
+flex:1;
+padding:17px;
+border-radius:16px;
+border:1px solid var(--border);
+background:rgba(0,0,0,.35);
+color:white;
+outline:none;
+font-size:16px;
+}
+
+.search-box input:focus{
+border-color:var(--accent);
+}
+
+.search-button{
+border:0;
+border-radius:16px;
+padding:0 25px;
+background:var(--accent);
+color:#111;
+font-weight:800;
+cursor:pointer;
+}
+
+.section-title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:35px 0 14px;
+}
+
+.section-title h2{
+font-size:20px;
+margin:0;
+}
+
+.section-title span{
+color:var(--muted);
+font-size:13px;
+}
+
+.moods{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+.mood{
+min-height:120px;
+padding:17px;
+border-radius:20px;
+border:1px solid var(--border);
+background:var(--card);
+color:white;
+text-align:left;
+cursor:pointer;
+transition:.25s;
+}
+
+.mood:hover{
+transform:translateY(-4px);
+border-color:var(--accent);
+}
+
+.mood.active{
+border-color:var(--accent);
+background:linear-gradient(
+135deg,
+rgba(255,184,77,.20),
+rgba(255,255,255,.05)
+);
+}
+
+.mood-icon{
+font-size:30px;
+}
+
+.mood-name{
+display:block;
+margin-top:10px;
+font-weight:800;
+}
+
+.mood-sub{
+color:var(--muted);
+font-size:12px;
+margin-top:4px;
+display:block;
+}
+
+.player-area{
+display:grid;
+grid-template-columns:1.25fr .75fr;
+gap:15px;
+margin-top:25px;
+}
+
+.glass{
+background:rgba(255,255,255,.06);
+border:1px solid var(--border);
+border-radius:24px;
+padding:16px;
+backdrop-filter:blur(18px);
+}
+
+.youtube-box{
+width:100%;
+aspect-ratio:16/9;
+background:#000;
+border-radius:16px;
+overflow:hidden;
+}
+
+#player{
+width:100%;
+height:100%;
+}
+
+.now-playing{
+display:flex;
+align-items:center;
+gap:13px;
+margin:16px 0;
+}
+
+.album{
+width:65px;
+height:65px;
+border-radius:17px;
+display:grid;
+place-items:center;
+background:linear-gradient(
+135deg,
+var(--accent),
+rgba(255,255,255,.15)
+);
+font-size:30px;
+flex-shrink:0;
+}
+
+.song-title{
+font-size:17px;
+font-weight:800;
+margin-bottom:5px;
+}
+
+.song-artist{
+color:var(--muted);
+font-size:13px;
+}
+
+.controls{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
+
+.control{
+width:46px;
+height:46px;
+border-radius:50%;
+border:1px solid var(--border);
+background:rgba(255,255,255,.08);
+color:white;
+cursor:pointer;
+font-size:17px;
+}
+
+.control:hover{
+border-color:var(--accent);
+}
+
+.control.active,
+.control.play{
+background:var(--accent);
+color:#111;
+}
+
+.results{
+max-height:540px;
+overflow-y:auto;
+}
+
+.result{
+display:flex;
+gap:12px;
+padding:10px;
+border-radius:14px;
+cursor:pointer;
+transition:.2s;
+}
+
+.result:hover{
+background:rgba(255,255,255,.09);
+}
+
+.thumbnail{
+width:105px;
+height:60px;
+object-fit:cover;
+border-radius:8px;
+background:#111;
+flex-shrink:0;
+}
+
+.result-info{
+flex:1;
+min-width:0;
+}
+
+.result-title{
+font-size:14px;
+font-weight:700;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.result-channel{
+color:var(--muted);
+font-size:12px;
+margin-top:6px;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+.result-date{
+color:#777;
+font-size:10px;
+margin-top:4px;
+}
+
+.status{
+color:var(--muted);
+font-size:13px;
+padding:12px 5px;
+text-align:center;
+}
+
+.footer{
+color:var(--muted);
+text-align:center;
+font-size:12px;
+margin-top:35px;
+line-height:1.7;
+}
+
+.player-error{
+height:100%;
+min-height:300px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:20px;
+color:#aaa;
+background:#000;
+}
+
+@media(max-width:850px){
+
+.moods{
+grid-template-columns:repeat(2,1fr);
+}
+
+.player-area{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:550px){
+
+.container{
+width:94%;
+}
+
+.search-box{
+flex-direction:column;
+}
+
+.search-button{
+height:50px;
+}
+
+.hero h1{
+letter-spacing:-3px;
+}
+
+.thumbnail{
+width:90px;
+height:55px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+
+<div class="logo">
+🎧 MOOD RADIO
+</div>
+
+<div class="clock" id="clock">
+--:--
+</div>
+
+</header>
+
+
+<section class="hero">
+
+<div class="hero-small">
+YOUR MUSIC · YOUR MOOD
+</div>
+
+<h1>
+Every mood<br>
+has a soundtrack.
+</h1>
+
+<p>
+Search any song, singer or artist on YouTube.
+Choose a mood and create your own personal radio.
+</p>
+
+<div class="quote" id="quote"></div>
+
+</section>
+
+
+<div class="search-box">
+
+<input
+id="searchInput"
+type="text"
+placeholder="Search song, singer or artist..."
+autocomplete="off"
+>
+
+<button
+class="search-button"
+id="searchButton"
+>
+🔍 Search
+</button>
+
+</div>
+
+
+<div class="section-title">
+
+<h2>
+Choose your mood
+</h2>
+
+<span id="resultCount">
+Ready
+</span>
+
+</div>
+
+
+<div class="moods" id="moods"></div>
+
+
+<div class="player-area">
+
+
+<section class="glass">
+
+<div class="youtube-box">
+
+<div id="player">
+
+<div class="player-error">
+🎵 Search for a song and select a result.
+</div>
+
+</div>
+
+</div>
+
+
+<div class="now-playing">
+
+<div class="album" id="album">
+🎧
+</div>
+
+<div>
+
+<div class="song-title" id="songTitle">
+Choose a song
+</div>
+
+<div class="song-artist" id="songArtist">
+Search YouTube to start
+</div>
+
+</div>
+
+</div>
+
+
+<div class="controls">
+
+<button
+class="control"
+id="previousButton"
+title="Previous"
+>
+⏮
+</button>
+
+<button
+class="control play"
+id="playButton"
+title="Play / Pause"
+>
+▶
+</button>
+
+<button
+class="control"
+id="nextButton"
+title="Next"
+>
+⏭
+</button>
+
+<button
+class="control"
+id="shuffleButton"
+title="Shuffle"
+>
+🔀
+</button>
+
+<button
+class="control"
+id="repeatButton"
+title="Repeat"
+>
+🔁
+</button>
+
+</div>
+
+</section>
+
+
+<section class="glass">
+
+<div class="section-title">
+
+<h2>
+Search Results
+</h2>
+
+<span>
+YouTube
+</span>
+
+</div>
+
+
+<div class="results" id="results">
+
+<div class="status">
+Search for a song or singer.
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<div class="footer">
+
+🎵 Mood Radio · Powered by YouTube<br>
+Search results and playback use YouTube's official APIs.
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   🔴 STEP 1:
+   PUT YOUR NEW YOUTUBE DATA API KEY HERE
+
+   IMPORTANT:
+   DO NOT USE YOUR OLD EXPOSED KEY.
+========================================================= */
+
+const API_KEY = "AIzaSyCMQF0MtYe3qixMqewUc9wSqFKUkDl0rtA";
+
+
+/* =========================================================
+   AIzaSyCMQF0MtYe3qixMqewUc9wSqFKUkDl0rtA
+  ========================================================= */
+
+const SEARCH_URL =
+"https://www.googleapis.com/youtube/v3/search";
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let player = null;
+
+let youtubeReady = false;
+
+let pendingVideoId = null;
+
+let searchResults = [];
+
+let currentIndex = -1;
+
+let shuffleMode = false;
+
+let repeatMode = false;
+
+let currentMood = 0;
+
+
+/* =========================================================
+   SHORTCUT
+========================================================= */
+
+const $ = id =>
+document.getElementById(id);
+
+
+/* =========================================================
+   MOODS
+========================================================= */
+
+const moods = [
+
+{
+icon:"🚌",
+name:"90s Bus",
+sub:"Window Seat",
+search:"90s Hindi songs"
+},
+
+{
+icon:"🏋️",
+name:"Gym",
+sub:"Beast Mode",
+search:"gym motivation songs"
+},
+
+{
+icon:"✈️",
+name:"Travel",
+sub:"Go Somewhere",
+search:"travel road trip songs"
+},
+
+{
+icon:"☀️",
+name:"Good Feel",
+sub:"Feel Alive",
+search:"feel good Hindi songs"
+},
+
+{
+icon:"💔",
+name:"Breakup",
+sub:"Let It Go",
+search:"Hindi breakup songs"
+},
+
+{
+icon:"🌧️",
+name:"Sad",
+sub:"Quiet Nights",
+search:"sad Hindi songs"
+},
+
+{
+icon:"🧠",
+name:"Good Thoughts",
+sub:"Better Mind",
+search:"positive life songs"
+},
+
+{
+icon:"🌙",
+name:"Late Night",
+sub:"2:17 AM",
+search:"late night Hindi songs"
+},
+
+{
+icon:"🤝",
+name:"Friendship",
+sub:"Our People",
+search:"friendship songs Hindi"
+},
+
+{
+icon:"🔥",
+name:"Hustle",
+sub:"No Excuses",
+search:"hustle motivation songs"
+},
+
+{
+icon:"🎮",
+name:"Childhood",
+sub:"Back Then",
+search:"childhood nostalgic Hindi songs"
+},
+
+{
+icon:"📻",
+name:"Old Songs",
+sub:"Time Machine",
+search:"old Hindi songs"
+}
+
+];
+
+
+/* =========================================================
+   DRAW MOODS
+========================================================= */
+
+function drawMoods(){
+
+$("moods").innerHTML = moods.map(
+(mood,index)=>`
+
+<button
+class="mood ${index === currentMood ? "active" : ""}"
+onclick="selectMood(${index})"
+>
+
+<span class="mood-icon">
+${mood.icon}
+</span>
+
+<span class="mood-name">
+${mood.name}
+</span>
+
+<span class="mood-sub">
+${mood.sub}
+</span>
+
+</button>
+
+`
+).join("");
+
+}
+
+
+/* =========================================================
+   SELECT MOOD
+========================================================= */
+
+function selectMood(index){
+
+currentMood = index;
+
+document.documentElement.style.setProperty(
+"--accent",
+getMoodColor(index)
+);
+
+drawMoods();
+
+searchYouTube(
+moods[index].search
+);
+
+}
+
+
+/* =========================================================
+   MOOD COLORS
+========================================================= */
+
+function getMoodColor(index){
+
+const colors = [
+
+"#ffb84d",
+"#ff4d6d",
+"#4db8ff",
+"#ffd166",
+"#ff6680",
+"#7898ff",
+"#7de2a8",
+"#a878ff",
+"#ff9c68",
+"#ff5b45",
+"#68d9d0",
+"#d9ad68"
+
+];
+
+return colors[index] || "#ffb84d";
+
+}
+
+
+/* =========================================================
+   SEARCH YOUTUBE
+========================================================= */
+
+async function searchYouTube(query){
+
+if(
+!API_KEY ||
+API_KEY ===
+"PASTE_YOUR_NEW_API_KEY_HERE"
+){
+
+showStatus(
+"⚠️ Add your NEW YouTube Data API key first."
+);
+
+return;
+
+}
+
+
+if(!query.trim()){
+return;
+}
+
+
+showStatus(
+"🔎 Searching YouTube..."
+);
+
+
+try{
+
+const params = new URLSearchParams({
+
+part:"snippet",
+
+q:query,
+
+type:"video",
+
+maxResults:"15",
+
+videoEmbeddable:"true",
+
+videoSyndicated:"true",
+
+key:API_KEY
+
+});
+
+
+const response =
+await fetch(
+SEARCH_URL + "?" + params.toString()
+);
+
+
+const data =
+await response.json();
+
+
+if(!response.ok || data.error){
+
+throw new Error(
+data.error?.message ||
+"YouTube API error."
+);
+
+}
+
+
+searchResults =
+data.items || [];
+
+
+currentIndex = -1;
+
+
+displayResults();
+
+}
+
+catch(error){
+
+console.error(
+"YouTube search error:",
+error
+);
+
+showStatus(
+"❌ " + error.message
+);
+
+}
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+========================================================= */
+
+function displayResults(){
+
+if(searchResults.length === 0){
+
+showStatus(
+"No videos found."
+);
+
+return;
+
+}
+
+
+$("resultCount").textContent =
+searchResults.length + " results";
+
+
+$("results").innerHTML =
+searchResults.map(
+(item,index)=>{
+
+const title =
+removeHTML(
+item.snippet.title
+);
+
+const channel =
+item.snippet.channelTitle;
+
+
+const thumbnail =
+item.snippet.thumbnails?.medium?.url ||
+item.snippet.thumbnails?.default?.url ||
+"";
+
+
+return `
+
+<div
+class="result"
+onclick="playResult(${index})"
+>
+
+<img
+class="thumbnail"
+src="${thumbnail}"
+alt=""
+>
+
+<div class="result-info">
+
+<div class="result-title">
+${escapeHTML(title)}
+</div>
+
+<div class="result-channel">
+${escapeHTML(channel)}
+</div>
+
+<div class="result-date">
+▶ Click to play
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}
+
+
+/* =========================================================
+   PLAY RESULT
+========================================================= */
+
+function playResult(index){
+
+if(!searchResults[index]){
+return;
+}
+
+
+currentIndex = index;
+
+
+const item =
+searchResults[index];
+
+
+const videoId =
+item.id?.videoId;
+
+
+if(!videoId){
+
+showPlayerMessage(
+"❌ This result does not contain a video."
+);
+
+return;
+
+}
+
+
+$("songTitle").textContent =
+removeHTML(
+item.snippet.title
+);
+
+
+$("songArtist").textContent =
+item.snippet.channelTitle;
+
+
+$("album").textContent =
+moods[currentMood].icon;
+
+
+pendingVideoId =
+videoId;
+
+
+if(!youtubeReady){
+
+showPlayerMessage(
+"⏳ YouTube player is loading..."
+);
+
+return;
+
+}
+
+
+if(!player){
+
+createPlayer(videoId);
+
+}
+
+else{
+
+player.loadVideoById(videoId);
+
+}
+
+}
+
+
+/* =========================================================
+   PLAYER MESSAGE
+========================================================= */
+
+function showPlayerMessage(message){
+
+$("player").innerHTML = `
+
+<div class="player-error">
+
+${escapeHTML(message)}
+
+</div>
+
+`;
+
+}
+
+
+/* =========================================================
+   CREATE YOUTUBE PLAYER
+========================================================= */
+
+function createPlayer(videoId){
+
+if(!youtubeReady){
+
+pendingVideoId =
+videoId;
+
+return;
+
+}
+
+
+$("player").innerHTML = "";
+
+
+player = new YT.Player(
+"player",
+{
+
+width:"100%",
+
+height:"100%",
+
+videoId:videoId,
+
+
+playerVars:{
+
+autoplay:1,
+
+playsinline:1,
+
+rel:0,
+
+enablejsapi:1,
+
+origin:window.location.origin
+
+},
+
+
+events:{
+
+onReady:function(event){
+
+console.log(
+"YouTube player ready"
+);
+
+event.target.playVideo();
+
+},
+
+
+onStateChange:
+onPlayerStateChange,
+
+
+onError:function(event){
+
+console.error(
+"YouTube player error:",
+event.data
+);
+
+
+let message =
+"❌ Unable to play this video.";
+
+
+if(event.data === 2){
+
+message =
+"❌ Invalid video ID.";
+
+}
+
+
+if(event.data === 5){
+
+message =
+"❌ HTML5 player error.";
+
+}
+
+
+if(event.data === 100){
+
+message =
+"❌ Video not found or removed.";
+
+}
+
+
+if(
+event.data === 101 ||
+event.data === 150
+){
+
+message =
+"❌ This video cannot be played in an embedded player. Try another result.";
+
+}
+
+
+if(event.data === 153){
+
+message =
+"❌ YouTube Error 153. Make sure you opened this website using Live Server (HTTP/HTTPS), not file://.";
+
+}
+
+
+showPlayerMessage(
+message
+);
+
+}
+
+}
+
+}
+);
+
+}
+
+
+/* =========================================================
+   PLAYER STATE
+========================================================= */
+
+function onPlayerStateChange(event){
+
+if(
+event.data ===
+YT.PlayerState.PLAYING
+){
+
+$("playButton").textContent =
+"⏸";
+
+}
+
+
+else if(
+event.data ===
+YT.PlayerState.PAUSED
+){
+
+$("playButton").textContent =
+"▶";
+
+}
+
+
+else if(
+event.data ===
+YT.PlayerState.ENDED
+){
+
+$("playButton").textContent =
+"▶";
+
+
+if(repeatMode){
+
+player.seekTo(
+0,
+true
+);
+
+player.playVideo();
+
+}
+
+else{
+
+nextSong();
+
+}
+
+}
+
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+========================================================= */
+
+$("playButton").onclick =
+function(){
+
+if(!player){
+
+if(searchResults.length){
+
+playResult(0);
+
+}
+
+return;
+
+}
+
+
+const state =
+player.getPlayerState();
+
+
+if(
+state ===
+YT.PlayerState.PLAYING
+){
+
+player.pauseVideo();
+
+}
+
+else{
+
+player.playVideo();
+
+}
+
+};
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+$("nextButton").onclick =
+nextSong;
+
+
+function nextSong(){
+
+if(!searchResults.length){
+return;
+}
+
+
+let nextIndex;
+
+
+if(shuffleMode){
+
+nextIndex =
+Math.floor(
+Math.random() *
+searchResults.length
+);
+
+}
+
+else{
+
+nextIndex =
+currentIndex + 1;
+
+
+if(
+nextIndex >=
+searchResults.length
+){
+
+nextIndex = 0;
+
+}
+
+}
+
+
+playResult(
+nextIndex
+);
+
+}
+
+
+/* =========================================================
+   PREVIOUS
+========================================================= */
+
+$("previousButton").onclick =
+previousSong;
+
+
+function previousSong(){
+
+if(!searchResults.length){
+return;
+}
+
+
+let index =
+currentIndex - 1;
+
+
+if(index < 0){
+
+index =
+searchResults.length - 1;
+
+}
+
+
+playResult(index);
+
+}
+
+
+/* =========================================================
+   SHUFFLE
+========================================================= */
+
+$("shuffleButton").onclick =
+function(){
+
+shuffleMode =
+!shuffleMode;
+
+
+this.classList.toggle(
+"active",
+shuffleMode
+);
+
+};
+
+
+/* =========================================================
+   REPEAT
+========================================================= */
+
+$("repeatButton").onclick =
+function(){
+
+repeatMode =
+!repeatMode;
+
+
+this.classList.toggle(
+"active",
+repeatMode
+);
+
+};
+
+
+/* =========================================================
+   SEARCH BUTTON
+========================================================= */
+
+$("searchButton").onclick =
+function(){
+
+const query =
+$("searchInput").value.trim();
+
+
+if(query){
+
+searchYouTube(
+query
+);
+
+}
+
+};
+
+
+/* =========================================================
+   ENTER SEARCH
+========================================================= */
+
+$("searchInput").onkeydown =
+function(event){
+
+if(event.key === "Enter"){
+
+$("searchButton").click();
+
+}
+
+};
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showStatus(message){
+
+$("results").innerHTML = `
+
+<div class="status">
+
+${escapeHTML(message)}
+
+</div>
+
+`;
+
+$("resultCount").textContent = "";
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(text){
+
+return String(text).replace(
+/[&<>"']/g,
+character => ({
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+
+}[character])
+);
+
+}
+
+
+/* =========================================================
+   REMOVE HTML
+========================================================= */
+
+function removeHTML(text){
+
+const element =
+document.createElement("div");
+
+
+element.innerHTML =
+text;
+
+
+return element.textContent ||
+element.innerText ||
+"";
+
+}
+
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+function updateClock(){
+
+const now =
+new Date();
+
+
+$("clock").textContent =
+now.toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)
++
+" · "
++
+now.toLocaleDateString(
+[],
+{
+weekday:"short",
+month:"short",
+day:"numeric"
+}
+);
+
+}
+
+
+updateClock();
+
+
+setInterval(
+updateClock,
+1000
+);
+
+
+/* =========================================================
+   QUOTES
+========================================================= */
+
+const quotes = [
+
+"Some roads are remembered by the songs we heard there.",
+
+"No bad day lasts forever.",
+
+"Keep going. Your future self is listening.",
+
+"Maybe the next song is the one you needed.",
+
+"Old songs. New memories.",
+
+"Take the long way home.",
+
+"It is okay to slow down.",
+
+"Life sounds better with the right soundtrack.",
+
+"One song can change the whole mood.",
+
+"Sometimes music understands you better than people."
+
+];
+
+
+let quoteIndex = 0;
+
+
+function changeQuote(){
+
+$("quote").textContent =
+"“" +
+quotes[
+quoteIndex % quotes.length
+] +
+"”";
+
+
+quoteIndex++;
+
+}
+
+
+changeQuote();
+
+
+setInterval(
+changeQuote,
+4500
+);
+
+
+/* =========================================================
+   INITIALIZE MOODS
+========================================================= */
+
+drawMoods();
+
+
+/* =========================================================
+   YOUTUBE IFRAME API
+========================================================= */
+
+window.onYouTubeIframeAPIReady =
+function(){
+
+youtubeReady = true;
+
+
+console.log(
+"YouTube IFrame API loaded."
+);
+
+
+if(
+pendingVideoId &&
+!player
+){
+
+createPlayer(
+pendingVideoId
+);
+
+}
+
+};
+
+
+/* =========================================================
+   LOAD YOUTUBE IFRAME API
+========================================================= */
+
+const youtubeScript =
+document.createElement("script");
+
+
+youtubeScript.src =
+"https://www.youtube.com/iframe_api";
+
+
+youtubeScript.async =
+true;
+
+
+document.head.appendChild(
+youtubeScript
+);
+
+</script>
+
+</body>
+</html>
+```
